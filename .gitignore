@@ -1,0 +1,8 @@
+node_modules/
+bower_components/
+*~
+.idea/
+csv/*.csv
+uploads/
+notes.txt
+.env
