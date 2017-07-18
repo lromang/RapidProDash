@@ -1,20 +1,27 @@
 var express = require('express');
 var router = express.Router();
-// Mongo
-var mongooose = require('mongoose');
-mongooose.connect('mongodb://localhost/RapidProDash')
+var path = require('path');
+var json2csv = require('json2csv'); //export -> csv
+var fs = require('fs'); //read/write files
+var db_conf = require('../db_conf');
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+router.use(flash());
 
-// Loading message model
-var Message = require('../models/message');
+// Configuring Passport
+var passport = require('passport');
+var expressSession = require('express-session');
+var bCrypt = require('bcrypt-nodejs');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  // Test Register
-    var message  = new Message();
-    message.text = 'Hola Mundo';
-    message.time =  new Date();
-    message.save();
-  res.render('index', { title: 'Dashboard' });
-});
+router.use(expressSession({secret: 'mySecretKey', resave : false , saveUninitialized: false}));
+router.use(passport.initialize());
+router.use(passport.session());
+var LocalStrategy = require('passport-local').Strategy;
 
 module.exports = router;
+
+/* GET login page. */
+router.get('/', function(req, res, next) {
+    res.render('index', { title: '', message : req.flash('message') });
+});
